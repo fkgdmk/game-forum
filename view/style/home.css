@@ -12,6 +12,7 @@
         border-radius: .25rem;
         width: 100% !important;
         height: 165px;
+        margin-bottom: 20px;
 }
 
 .game-card:hover {

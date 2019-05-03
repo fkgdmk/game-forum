@@ -1,3 +1,23 @@
+<?php
+
+spl_autoload_register(function ($class_name) {
+    include "../../controller/database/" . $class_name . '.php';
+});
+
+if (isset($_GET['gameId'])) {
+    $gameId = $_GET['gameId'];
+    
+    $db = new DB();
+    $connection = $db->connectToDb();
+    $sql = "SELECT * FROM game WHERE game.id = $gameId";
+    $result = $connection->query($sql);
+
+    $game = mysqli_fetch_assoc($result);
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,13 +48,13 @@
         </div>
     </nav>
     <div class="container">
-        <h3>Counter Strike Source</h3>
+        <h3><?php echo $game['title']; ?></h3>
         <b>Release Year</b>
-        <p>2002</p>
+        <p><?php echo $game['year']; ?></p>
         <b>Genre</b>
-        <p>FPS</p>
+        <p><?php echo $game['genre']; ?></p>
         <b>Description</b>
-        <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <p><?php echo $game['description']; ?></p>
         <div class="comments-container">
             <h5>Comments</h5>
             <div class="comments">

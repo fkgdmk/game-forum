@@ -6,19 +6,8 @@ spl_autoload_register(function ($class_name) {
 
 $db = new DB();
 $connection = $db->connectToDb();
-$sql = "SELECT * FROM game"; 
+$sql = "SELECT * FROM game";
 $result = $connection->query($sql);
-
-if ($result->num_rows > 0) {
-    echo "<table><tr><th>ID</th><th>Name</th></tr>";
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-        echo "<tr><td>".$row["id"]."</td><td>".$row["title"]." ".$row["genre"]."</td></tr>";
-    }
-    echo "</table>";
-} else {
-    // echo "0 results"; 
-}
 
 ?>
 
@@ -53,18 +42,28 @@ if ($result->num_rows > 0) {
     </nav>
     <div class="container">
         <div class="btn-container">
-            <a class="btn btn-dark" href="view/html/addgame.php" role="button">Add Game</a>
+            <a class="btn btn-dark" href="view/html/addgame.php?varname=<?php echo $test ?>" role="button">Add Game</a>
         </div>
-        <a href="view/html/game.php">
-            <div class="game-card" style="width: 18rem;">
-                <img src="https://images.g2a.com/newlayout/600x351/1x1x0/07ed1041ce55/5b5af938ae653a6139610943" alt="Card image cap">
-                <div class="card-content">
-                    <h5 class="card-title">Counter Strike Source (2002)</h5>
-                    <b>Genre: FPS</b>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-            </div>
-        </a>
+        <?php
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while ($row = $result->fetch_assoc()) {
+                echo '<a href="view/html/game.php?gameId=' . $row['id'] . '">' .
+                    '<div class="game-card" style="width: 18rem;">' .
+                    '<img src="https://images.g2a.com/newlayout/600x351/1x1x0/07ed1041ce55/5b5af938ae653a6139610943" alt="Card image cap">' .
+                    '<div class="card-content">' .
+                    '<h5 class="card-title">' . $row['title'] . ' (' . $row['year'] . ')</h5>' .
+                    '<b>Genre: ' . $row['genre'] . '</b>' .
+                    '<p class="card-text">' . $row['description'] . '</p>' .
+                    '</div>' .
+                    '</div>' .
+                    '</a>';
+            }
+            echo "</table>";
+        } else {
+            echo "<p>The games list is empty</p>";
+        }
+        ?>
     </div>
 </body>
 
