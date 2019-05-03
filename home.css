@@ -1,0 +1,48 @@
+.game-card {
+        /* position: relative; */
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: row;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: .25rem;
+        width: 100% !important;
+}
+
+.game-card:hover {
+    background-color: #F0F0F0;    
+}
+
+img {
+    width: 25%;
+    height: 100%;
+    border-radius: .25rem;
+}
+
+.card-content {
+    margin: 10px;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    margin-right: 0px; 
+}
+
+a {
+    color: #343a40;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #343a40;
+}
