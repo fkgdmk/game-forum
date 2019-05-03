@@ -7,7 +7,7 @@
         {
             $servername = "localhost";
             $username = "root";
-            $password = "";
+            $password = "password";
             $database = "game_forum";
 
             $this->connection = new mysqli($servername, $username, $password, $database);
