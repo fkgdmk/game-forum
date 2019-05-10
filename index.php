@@ -1,3 +1,20 @@
+<?php
+session_start();
+include "login.actions.php";
+
+// session_destroy();
+
+if (isset($_POST['email']) && isset($_POST['password'])) {
+
+    $user_verified = verify_user($_POST['email'], $_POST['password']);
+
+    if ($user_verified) {
+        $_SESSION['email'] = $_POST['email'];
+        header( 'Location: home.php' );
+    }     
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,22 +33,27 @@
 <body>
     <div class="container">
         <h3 class="title">Login</h3>
-        <form method="POST" action="home.php">
+        <form method="POST">
             <div class="form-group">
                 <label>E-mail</label>
-                <input type="email" class="form-control" placeholder= "example@hotmail.com" name="email">
+                <input class="form-control" placeholder= "example@hotmail.com" name="email">
             </div>
             <div class="form-group">
                 <label>password</label>
                 <input type="password" class="form-control" placeholder= "********" name="password">
             </div>
+            <?php if (isset($user_verified) && !$user_verified) : ?>
+                <div class="login-denied" style="color: red">
+                    <p>Wrong username or password</p>
+                </div>
+            <?php endif ?>
             <div>
                 <input type="submit" class="btn btn-primary" value="Login">  
             </div>
         </form>
         <a href="forgot_pass.php" class="forgot-password">Forgot password?</a>
         <br>
-        <a href="sign_up.php" class="sign-up">Sign up if you don't have a account</p>
+        <!-- <a href="sign_up.php" class="sign-up">Sign up if you don't have a account</p> -->
     </div>
 </body>
 
