@@ -5,7 +5,7 @@ spl_autoload_register(function ($class_name) {
 });
 
 $db = new DB();
-$connection = $db->connect_to_db();
+$connection = $db->connect_to_db(); 
 $sql = "SELECT * FROM game";
 $result = $connection->query($sql);
 

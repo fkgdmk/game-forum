@@ -4,17 +4,39 @@ spl_autoload_register(function ($class_name) {
     include "database/" . $class_name . '.php';
 });
 
+require_once(__DIR__.'/comments.php');
+
 if (isset($_GET['gameId'])) {
     $gameId = $_GET['gameId'];
     
     $db = new DB();
     $connection = $db->connect_to_db();
-    $sql = "SELECT * FROM game WHERE game.id = $gameId";
-    $result = $connection->query($sql);
+    
+    if (isset($_POST['comment'])) {
+    
+        $comment = $_POST['comment'];
+        $stmt = $connection->prepare("INSERT INTO comment (user_id, game_id, content) VALUES (?, ?, ?)");
+        
+        $userId = 1;
+        //TODO : SKIFT USER ID TIL SESSION ID
+        $stmt->bind_param("iis", $userId, $gameId, $comment);
+        $stmt->execute();
+    }
 
-    $game = mysqli_fetch_assoc($result);
+    $game_query = "SELECT * 
+                    FROM game 
+                    WHERE game.id = $gameId";
+    $game_result = $connection->query($game_query);
+
+    $comment_query = "SELECT COMMENT.id AS comment_id, user.id, user.nickname AS user_nickname, 
+                        COMMENT.user_id, game_id, COMMENT.content AS comment_content
+                        FROM COMMENT 
+                        JOIN user ON user.id = COMMENT.user_id 
+                        WHERE game_id = $gameId";
+
+    $comment_result = $connection->query($comment_query);
+    $game = mysqli_fetch_assoc($game_result);
 }
-
 ?>
 
 
@@ -48,26 +70,22 @@ if (isset($_GET['gameId'])) {
         </div>
     </nav>
     <div class="container">
-        <h3><?php echo $game['title']; ?></h3>
+        <h3><?= $game['title']; ?></h3>
         <b>Release Year</b>
-        <p><?php echo $game['year']; ?></p>
+        <p><?= $game['year']; ?></p>
         <b>Genre</b>
-        <p><?php echo $game['genre']; ?></p>
+        <p><?= $game['genre']; ?></p>
         <b>Description</b>
-        <p><?php echo $game['description']; ?></p>
-        <div class="comments-container">
-            <h5>Comments</h5>
-            <div class="comments">
-                <hr>
-                <h6>Bruger - 10.34</h6>
-                <p>Det er et ok spil men også en smule lort</p>
-                <hr>
-            </div>
-            <form>
-                <div class="form-group">
-                    <label for="exampleFormControlTextarea1">Write Comment</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                </div>  
+        <p><?= $game['description']; ?></p>
+        <?php 
+            create_comments($comment_result);
+        ?>
+        <div class="form-group">
+                <label for="exampleFormControlTextarea1">Write Comment</label>
+            <form method="post">
+                <textarea class="form-control" name="comment" id="exampleFormControlTextarea1" rows="3"></textarea>
+                <input type="hidden" name="gameId" value=" <?php echo $_GET['gameId']; ?>"/>
+                <input class="btn btn-dark" type="submit"  role="button" value="Post">
             </form>
         </div>
     </div>
