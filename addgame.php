@@ -54,7 +54,7 @@
             if (isset($_POST["title"]) && isset($_POST["year"]) && isset($_POST["genre"]) &&
                 isset($_POST["description"])) {
                 //TODO add the correct user_id when login and session system has been made
-                add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], 10);
+                add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], 2);
                 $succes_msg = "Succes! The game has been added to the list";
             }
         }
