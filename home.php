@@ -1,11 +1,11 @@
 <?php
 
 spl_autoload_register(function ($class_name) {
-    include "controller/database/" . $class_name . '.php';
+    include "database/" . $class_name . '.php';
 });
 
 $db = new DB();
-$connection = $db->connectToDb();
+$connection = $db->connect_to_db();
 $sql = "SELECT * FROM game";
 $result = $connection->query($sql);
 
@@ -22,7 +22,7 @@ $result = $connection->query($sql);
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="view/style/home.css">
+    <link rel="stylesheet" href="style/home.css">
     <title>Home</title>
 </head>
 
@@ -42,13 +42,13 @@ $result = $connection->query($sql);
     </nav>
     <div class="container">
         <div class="btn-container">
-            <a class="btn btn-dark" href="view/html/addgame.php?varname=<?php echo $test ?>" role="button">Add Game</a>
+            <a class="btn btn-dark" href="addgame.php" role="button">Add Game</a>
         </div>
         <?php
         if ($result->num_rows > 0) {
             // output data of each row
             while ($row = $result->fetch_assoc()) {
-                echo '<a href="view/html/game.php?gameId=' . $row['id'] . '">' .
+                echo '<a href="game.php?gameId=' . $row['id'] . '">' .
                     '<div class="game-card" style="width: 18rem;">' .
                     '<img src="https://images.g2a.com/newlayout/600x351/1x1x0/07ed1041ce55/5b5af938ae653a6139610943" alt="Card image cap">' .
                     '<div class="card-content">' .
