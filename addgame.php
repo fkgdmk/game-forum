@@ -1,6 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php
+    include "database/DB.php";
+
+    $title_error = "";
+    $succes_msg = "";
+
+    //Check if game already exist
+    function game_exist(){
+        $db = new DB();
+        $conn = $db->connect_to_db();
+        $statement = $conn->prepare("SELECT title FROM game WHERE title = ? AND year = ?");
+        $statement->bind_param("si", $_POST["title"], $_POST["year"]);
+        $statement->execute();
+        $result = $statement->get_result();
+
+        if ($result->num_rows === 0){
+            //This game doesn't exist
+            $statement->close();
+            $conn->close();
+            return false;
+        }
+
+        else{
+            //This game already exist
+            $statement->close();
+            $conn->close();
+            return true;
+        }
+    }
+
+    //Add games with prepared statements
+    function add_game($title, $release_year, $genre, $description, $user_id){
+        $db = new DB();
+        $conn = $db->connect_to_db();
+        $statement = $conn->prepare("INSERT INTO game (title, year, genre, description, user_id) VALUES(?, ?, ?, ?, ?)");
+        $statement->bind_param("sissi", $title, $release_year, $genre, $description, $user_id);
+        $statement->execute();
+        $statement->close();
+        $conn->close();
+        
+    }
+
+    //Only run when this page is loaded as a POST
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (game_exist())
+        {
+            $title_error = "This game already exist create another game";
+        }
+        else {
+            //Check if these POST variables exist
+            if (isset($_POST["title"]) && isset($_POST["year"]) && isset($_POST["genre"]) &&
+                isset($_POST["description"])) {
+                //TODO add the correct user_id when login and session system has been made
+                add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], 10);
+                $succes_msg = "Succes! The game has been added to the list";
+            }
+        }
+    }
+
+?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,24 +90,24 @@
     </nav>
     <div class="container">
         <h3>Add New Game</h3>
-        <form>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <div class="form-group">
-                <label for="exampleInputEmail1">Title</label>
-                <input class="form-control" id="exampleInputEmail1">
+                <label>Title</label>
+                <input class="form-control" name="title"> <?php echo $title_error; ?>
             </div>
             <div class="form-group">
-                <label for="exampleInputPassword1">Description</label>
-                <input class="form-control" id="exampleInputPassword1">
+                <label>Description</label>
+                <input class="form-control" name="description">
             </div>
             <div class="form-group">
-                <label for="exampleInputPassword1">Genre</label>
-                <input class="form-control" id="exampleInputPassword1">
+                <label>Genre</label>
+                <input class="form-control" name="genre">
             </div>
             <div class="form-group">
-                <label for="exampleInputPassword1">Release Year</label>
-                <input class="form-control" id="exampleInputPassword1">
+                <label>Release Year</label>
+                <input class="form-control" name="year">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <input type="submit" class="btn btn-primary"> <?php echo $succes_msg; ?>
         </form>
     </div>
 </body>
