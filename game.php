@@ -1,4 +1,9 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['email'])) {
+    header("Location: index.php");
+}
 
 spl_autoload_register(function ($class_name) {
     include "database/" . $class_name . '.php';

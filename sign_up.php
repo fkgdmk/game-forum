@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -14,16 +14,16 @@
 </head>
 
 <?php 
-    include "database/DB.php";
+    // include "database/DB.php";
 
-    function insert_new_user($email, $nickname, $password){
-        $db = new DB();
-        $conn = $db->connect_to_db();
-        $statement = $conn->prepare("INSERT INTO user (email, nickname, password VALUES(?, ?, ?))");
-        $statement->bind_param("sss", $email, $nickname, $password);
-        $statement->execute();
+    // function insert_new_user($email, $nickname, $password){
+    //     $db = new DB();
+    //     $conn = $db->connect_to_db();
+    //     $statement = $conn->prepare("INSERT INTO user (email, nickname, password VALUES(?, ?, ?))");
+    //     $statement->bind_param("sss", $email, $nickname, $password);
+    //     $statement->execute();
         
-    }
+    // }
 ?>
 
 <body>
@@ -52,4 +52,4 @@
 
 </html>
 
-    
+     -->

@@ -5,7 +5,6 @@ function verify_user($email, $password)
 {
     $db = new DB();
     $connection = $db->connect_to_db();
-
     $stmt = $connection->prepare("SELECT email, password 
                                 FROM user 
                                 WHERE email = ?");
@@ -20,8 +19,9 @@ function verify_user($email, $password)
         while ($user = $users->fetch_assoc()) {
             if (password_verify($password, $user['password'])) {
                 return true;
+            } else {
+                return false;
             }
-            return false;
         }
     } 
     return false;
