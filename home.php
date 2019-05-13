@@ -9,6 +9,8 @@ spl_autoload_register(function ($class_name) {
     include "database/" . $class_name . '.php';
 });
 
+include "partials/navbar.php";
+
 $db = new DB();
 $connection = $db->connect_to_db(); 
 $sql = "SELECT * FROM game";
@@ -32,19 +34,7 @@ $result = $connection->query($sql);
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-bottom: 20px;">
-        <a class="navbar-brand" href="home.php">Game Forum</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="home.php">Home <span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <?php create_navbar()?>
     <div class="container">
         <div class="btn-container">
             <a class="btn btn-dark" href="addgame.php" role="button">Add Game</a>
@@ -53,13 +43,18 @@ $result = $connection->query($sql);
         if ($result->num_rows > 0) {
             // output data of each row
             while ($row = $result->fetch_assoc()) {
+                $title = htmlspecialchars($row['title']);
+                $year = htmlspecialchars($row['year']);
+                $genre = htmlspecialchars($row['genre']);
+                $description = htmlspecialchars($row['description']);
+
                 echo '<a href="game.php?gameId=' . $row['id'] . '">' .
                     '<div class="game-card" style="width: 18rem;">' .
                     '<img src="https://images.g2a.com/newlayout/600x351/1x1x0/07ed1041ce55/5b5af938ae653a6139610943" alt="Card image cap">' .
                     '<div class="card-content">' .
-                    '<h5 class="card-title">' . $row['title'] . ' (' . $row['year'] . ')</h5>' .
-                    '<b>Genre: ' . $row['genre'] . '</b>' .
-                    '<p class="card-text">' . $row['description'] . '</p>' .
+                    '<h5 class="card-title">' . $title . ' (' . $year . ')</h5>' .
+                    '<b>Genre: ' . $genre . '</b>' .
+                    '<p class="card-text">' . $description . '</p>' .
                     '</div>' .
                     '</div>' .
                     '</a>';

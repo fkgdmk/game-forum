@@ -9,22 +9,29 @@ spl_autoload_register(function ($class_name) {
     include "database/" . $class_name . '.php';
 });
 
-require_once(__DIR__.'/comments.php');
+include "partials/navbar.php";
+include "partials/comments.php";
 
 if (isset($_GET['gameId'])) {
     $gameId = $_GET['gameId'];
-    
     $db = new DB();
     $connection = $db->connect_to_db();
-    
-    if (isset($_POST['comment'])) {
-    
-        $comment = $_POST['comment'];
-        $stmt = $connection->prepare("INSERT INTO comment (user_id, game_id, content) VALUES (?, ?, ?)");
-        
-        $userId = 1;
-        //TODO : SKIFT USER ID TIL SESSION ID
-        $stmt->bind_param("iis", $userId, $gameId, $comment);
+
+    if (isset($_POST['delete_comment'])) {
+        if (isset($_POST['comment_id'])) {
+            $delete_query = $connection->prepare("DELETE FROM comment WHERE id = ?");
+            $delete_query->bind_param("i", $_POST['comment_id']);
+            $delete_query->execute();
+            $delete_query->close();
+        }
+    }
+
+    if (!empty($_POST['comment'])) {
+        $comment = mysqli_real_escape_string($connection, $_POST['comment']);
+        $stmt = $connection->prepare("INSERT INTO comment (user_id, game_id, content) 
+                                    VALUES (?, ?, ?)");
+
+        $stmt->bind_param("iis", $_SESSION['user_id'], $_GET['gameId'], $comment);
         $stmt->execute();
     }
 
@@ -33,13 +40,14 @@ if (isset($_GET['gameId'])) {
                     WHERE game.id = $gameId";
     $game_result = $connection->query($game_query);
 
-    $comment_query = "SELECT COMMENT.id AS comment_id, user.id, user.nickname AS user_nickname, 
+    $comment_query = "SELECT COMMENT.id AS comment_id, user.id AS user_id, user.nickname AS user_nickname, 
                         COMMENT.user_id, game_id, COMMENT.content AS comment_content
                         FROM COMMENT 
                         JOIN user ON user.id = COMMENT.user_id 
                         WHERE game_id = $gameId";
 
     $comment_result = $connection->query($comment_query);
+    $connection->close();
     $game = mysqli_fetch_assoc($game_result);
 }
 ?>
@@ -61,36 +69,29 @@ if (isset($_GET['gameId'])) {
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-bottom: 20px;">
-        <a class="navbar-brand" href="home.php">Game Forum</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="home.php">Home<span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <?php create_navbar()?>
     <div class="container">
-        <h3><?= $game['title']; ?></h3>
+        <div class="game-header">
+            <h3><?= htmlspecialchars($game['title']); ?></h3>
+        </div>
         <b>Release Year</b>
-        <p><?= $game['year']; ?></p>
+        <p><?= htmlspecialchars($game['year']); ?></p>
         <b>Genre</b>
-        <p><?= $game['genre']; ?></p>
+        <p><?= htmlspecialchars($game['genre']); ?></p>
         <b>Description</b>
-        <p><?= $game['description']; ?></p>
-        <?php 
-            create_comments($comment_result);
+        <p><?= htmlspecialchars($game['description']); ?></p>
+        <?php
+        create_comments($comment_result);
         ?>
         <div class="form-group">
-                <label for="exampleFormControlTextarea1">Write Comment</label>
+            <label for="exampleFormControlTextarea1">Write Comment</label>
             <form method="post">
                 <textarea class="form-control" name="comment" id="exampleFormControlTextarea1" rows="3"></textarea>
-                <input type="hidden" name="gameId" value=" <?php echo $_GET['gameId']; ?>"/>
-                <input class="btn btn-dark" type="submit"  role="button" value="Post">
+                <input type="hidden" name="gameId" value="<?= $_GET['gameId']; ?>" />
+                <!-- <input type="hidden" name="token" value="<?php
+                                                                
+                                                                ?>"> -->
+                <input class="btn btn-dark" type="submit" role="button" value="Post">
             </form>
         </div>
     </div>

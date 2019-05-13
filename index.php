@@ -1,17 +1,25 @@
 <?php
 session_start();
 include "login.actions.php";
-
 // session_destroy();
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $user_authenticated = false;
+    $three_attempts = check_failed_attempted_logins($email);
 
-    $user_verified = verify_user($_POST['email'], $_POST['password']);
+    if (!$three_attempts) {
+        $user_authenticated = verify_user($email, $password);
+    
+        if ($user_authenticated) {
+            header( 'Location: home.php' );
+        }
+    } 
+    
+    echo '<br>' . 'at : '. $three_attempts;
 
-    if ($user_verified) {
-        $_SESSION['email'] = $_POST['email'];
-        header( 'Location: home.php' );
-    }     
+    create_login_log($email, $user_authenticated);
 }
 ?>
 
@@ -45,6 +53,11 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             <?php if (isset($user_verified) && !$user_verified) : ?>
                 <div class="login-denied" style="color: red">
                     <p>Wrong username or password</p>
+                </div>
+            <?php endif ?>
+            <?php if (isset($three_attempts) && $three_attempts) : ?>
+                <div class="login-denied" style="color: red">
+                    <p>Try again in 5 minutes</p>
                 </div>
             <?php endif ?>
             <div>

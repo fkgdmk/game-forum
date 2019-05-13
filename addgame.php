@@ -6,7 +6,7 @@ if (!isset($_SESSION['email'])) {
     header("Location: index.php");
 }
     include "database/DB.php";
-
+    include "partials/navbar.php";
     $title_error = "";
     $succes_msg = "";
 
@@ -14,7 +14,10 @@ if (!isset($_SESSION['email'])) {
     function game_exist(){
         $db = new DB();
         $conn = $db->connect_to_db();
-        $statement = $conn->prepare("SELECT title FROM game WHERE title = ? AND year = ?");
+        $statement = $conn->prepare("SELECT title 
+                                    FROM game 
+                                    WHERE title = ? 
+                                    AND year = ?");
         $statement->bind_param("si", $_POST["title"], $_POST["year"]);
         $statement->execute();
         $result = $statement->get_result();
@@ -36,10 +39,18 @@ if (!isset($_SESSION['email'])) {
 
     //Add games with prepared statements
     function add_game($title, $release_year, $genre, $description, $user_id){
+
+        
         $db = new DB();
         $conn = $db->connect_to_db();
+        $sanitized_title = mysqli_real_escape_string($conn, $title);
+        $sanitized_release_year = mysqli_real_escape_string($conn, $release_year);
+        $sanitized_genre = mysqli_real_escape_string($conn, $genre);
+        $sanitized_description = mysqli_real_escape_string($conn, $description);
+        $sanitized_user_id = mysqli_real_escape_string($conn, $user_id);
+
         $statement = $conn->prepare("INSERT INTO game (title, year, genre, description, user_id) VALUES(?, ?, ?, ?, ?)");
-        $statement->bind_param("sissi", $title, $release_year, $genre, $description, $user_id);
+        $statement->bind_param("sissi", $sanitized_title, $sanitized_release_year, $sanitized_genre, $sanitized_description, $sanitized_user_id);
         $statement->execute();
         $statement->close();
         $conn->close();
@@ -48,6 +59,7 @@ if (!isset($_SESSION['email'])) {
 
     //Only run when this page is loaded as a POST
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
         if (game_exist())
         {
             $title_error = "This game already exist create another game";
@@ -57,7 +69,7 @@ if (!isset($_SESSION['email'])) {
             if (isset($_POST["title"]) && isset($_POST["year"]) && isset($_POST["genre"]) &&
                 isset($_POST["description"])) {
                 //TODO add the correct user_id when login and session system has been made
-                add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], 2);
+                add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], $_SESSION['user_id']);
                 $succes_msg = "Succes! The game has been added to the list";
             }
         }
@@ -79,19 +91,7 @@ if (!isset($_SESSION['email'])) {
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-bottom: 20px;">
-        <a class="navbar-brand" href="home.php">Game Forum</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="home.php">Home<span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <?php create_navbar()?>
     <div class="container">
         <h3>Add New Game</h3>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -109,7 +109,7 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="form-group">
                 <label>Release Year</label>
-                <input class="form-control" name="year">
+                <input type="number" class="form-control" name="year">
             </div>
             <input type="submit" class="btn btn-primary"> <?php echo $succes_msg; ?>
         </form>
