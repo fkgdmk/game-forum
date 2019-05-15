@@ -66,7 +66,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
         </form>
         <a href="forgot_pass.php" class="forgot-password">Forgot password?</a>
         <br>
-        <!-- <a href="sign_up.php" class="sign-up">Sign up if you don't have a account</p> -->
+        <a href="sign_up.php" class="sign-up">Sign up if you don't have a account</p>
     </div>
 </body>
 
