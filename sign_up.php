@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -14,75 +14,75 @@
 </head>
 
 <?php 
-    // include "database/DB.php";
+    include "database/DB.php";
 
-//     $email_error = "";
-//     $action = "sign_up.php";
+    $email_error = "";
+    $action = "sign_up.php";
 
-//     //Check if this user already exist
-//     function user_exist(){
-//         $db = new DB();
-//         $conn = $db->connect_to_db();
-//         $statement = $conn->prepare("SELECT * FROM user WHERE email = ?");
-//         $statement->bind_param("s", $_POST["email"]);
-//         $statement->execute();
+    //Check if this user already exist
+    function user_exist(){
+        $db = new DB();
+        $conn = $db->connect_to_db();
+        $statement = $conn->prepare("SELECT * FROM user WHERE email = ?");
+        $statement->bind_param("s", $_POST["email"]);
+        $statement->execute();
 
-//         $result = $statement->get_result();
+        $result = $statement->get_result();
 
-//         if ($result->num_rows === 0){
-//             //This user doesn't exist
-//             $statement->close();
-//             $conn->close();
-//             return false;
-//         }
+        if ($result->num_rows === 0){
+            //This user doesn't exist
+            $statement->close();
+            $conn->close();
+            return false;
+        }
 
-//         else{
-//             //This user already exist
-//             $statement->close();
-//             $conn->close();
-//             return true;
-//         }
-//     }
+        else{
+            //This user already exist
+            $statement->close();
+            $conn->close();
+            return true;
+        }
+    }
 
-//     //Insert a new user
-//     function insert_new_user($email, $nickname, $password){
-//         $db = new DB();
-//         $conn = $db->connect_to_db();
-//         $statement = $conn->prepare("INSERT INTO user (email, nickname, password) VALUES(?, ?, ?)");
+    //Insert a new user
+    function insert_new_user($email, $nickname, $password){
+        $db = new DB();
+        $conn = $db->connect_to_db();
+        $statement = $conn->prepare("INSERT INTO user (email, nickname, password) VALUES(?, ?, ?)");
 
-//         $hashedPassword = hash_password($password);
+        $hashedPassword = hash_password($password);
 
-//         $statement->bind_param("sss", $email, $nickname, $hashedPassword);
-//         $statement->execute();
-//         $statement->close();
-//         $conn->close();
-//     }
+        $statement->bind_param("sss", $email, $nickname, $hashedPassword);
+        $statement->execute();
+        $statement->close();
+        $conn->close();
+    }
 
-//     //Hash the password with BCRYPT
-//     function hash_password($password){
-//         $options = [
-//                 'cost' => 10,
-//         ];
-//         return password_hash($password, PASSWORD_BCRYPT, $options);
-//     }
+    //Hash the password with BCRYPT
+    function hash_password($password){
+        $options = [
+                'cost' => 10,
+        ];
+        return password_hash($password, PASSWORD_BCRYPT, $options);
+    }
 
-//     //Run this only when method is post
-//     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//         if (user_exist()) {
-//             $action = "sign_up.php";
-//             $email_error = "This email already exist";
-//         }
-//         else {
-//             //Check if these POST variables exist
-//             if (isset($_POST["email"]) && isset($_POST["nickname"]) && isset($_POST["password"])) {
+    //Run this only when method is post
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (user_exist()) {
+            $action = "sign_up.php";
+            $email_error = "This email already exist";
+        }
+        else {
+            //Check if these POST variables exist
+            if (isset($_POST["email"]) && isset($_POST["nickname"]) && isset($_POST["password"])) {
 
-//                 insert_new_user($_POST["email"], $_POST["nickname"], $_POST["password"]);
-//                 $action = "home.php";
-//                 header("Location: home.php");
+                insert_new_user($_POST["email"], $_POST["nickname"], $_POST["password"]);
+                $action = "home.php";
+                header("Location: home.php");
 
-//         }
-//     }
-// }
+        }
+    }
+}
 
 ?>
 
@@ -112,5 +112,3 @@
 
 
 </html>
-
-     -->

@@ -111,6 +111,10 @@ if (!isset($_SESSION['email'])) {
                 <label>Release Year</label>
                 <input type="number" class="form-control" name="year">
             </div>
+            <div class="form-group">
+                <label>Image: </label>
+                <input type="file" name="image" />
+            </div>
             <input type="submit" class="btn btn-primary"> <?php echo $succes_msg; ?>
         </form>
     </div>
