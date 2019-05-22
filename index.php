@@ -4,27 +4,37 @@ include "login.actions.php";
 // session_destroy();
 $user_id = -1;
 
+if (isset($_POST['test'])) { }
+
 if (isset($_POST['email']) && isset($_POST['password'])) {
-    echo "wuh";
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $three_attempts = check_failed_attempted_logins($email);
 
-    if (!$three_attempts) {
-        $user_id = verify_user($email, $password);
+    //Using recaptcha to check if user is not a robot
+    $secret = '6Lcs_KQUAAAAAIiLod60svu56ksbgYaLQs29z_QR';
+    $response_key = $_POST['g-recaptcha-response'];
+    $user_ip = $_SERVER['REMOTE_ADDR'];
+    $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response_key&remoteip=$user_ip";
+    $response = file_get_contents($url);
+    $response = json_decode($response);
 
-        if ($user_id > 0) {
-            $auth_code = send_2step_code();
+    if ($response->success) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $three_attempts = check_failed_attempted_logins($email);
 
-            $_SESSION['authCode'] = $auth_code;
-            header('Location: 2step_auth.php?userId='. $user_id);
+        if (!$three_attempts) {
+            $user_id = verify_user($email, $password);
+
+            if ($user_id > 0) {
+                $auth_code = send_2step_code();
+
+                $_SESSION['authCode'] = $auth_code;
+                header('Location: 2step_auth.php?userId=' . $user_id);
+            }
         }
-    }
 
-    echo '<br>' . 'at : ' . $three_attempts;
-    
-    $user_authenticated = $user_id > 0 ? 1 : 0;
-    create_login_log($email, $user_authenticated);
+        $user_authenticated = $user_id > 0 ? 1 : 0;
+        create_login_log($email, $user_authenticated);
+    }
 }
 
 if (isset($_POST['authCode'])) {
@@ -46,6 +56,7 @@ if (isset($_POST['authCode'])) {
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=reCAPTCHA_site_key"></script>
     <link rel="stylesheet" href="style/login.css">
     <title>Login page</title>
 </head>
@@ -73,6 +84,8 @@ if (isset($_POST['authCode'])) {
                         <p>Try again in 5 minutes</p>
                     </div>
                 <?php endif ?>
+                <div class="g-recaptcha" data-sitekey="6Lcs_KQUAAAAAJ5BW7h756_qkj1fwdbrZZx7p5g-"></div>
+                <br />
                 <div>
                     <input type="submit" class="btn btn-primary" value="Login">
                 </div>
@@ -82,6 +95,7 @@ if (isset($_POST['authCode'])) {
         <br>
         <a href="sign_up.php" class="sign-up">Sign up if you don't have a account</p>
     </div>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 
 
