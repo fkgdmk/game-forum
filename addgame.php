@@ -2,7 +2,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
 }
     include "database/DB.php";
@@ -38,9 +38,9 @@ if (!isset($_SESSION['email'])) {
     }
 
     //Add games with prepared statements
-    function add_game($title, $release_year, $genre, $description, $user_id){
+    function add_game($title, $release_year, $genre, $description, $user_id, $file_name, $file_destination){
 
-        
+
         $db = new DB();
         $conn = $db->connect_to_db();
         $sanitized_title = mysqli_real_escape_string($conn, $title);
@@ -49,8 +49,11 @@ if (!isset($_SESSION['email'])) {
         $sanitized_description = mysqli_real_escape_string($conn, $description);
         $sanitized_user_id = mysqli_real_escape_string($conn, $user_id);
 
-        $statement = $conn->prepare("INSERT INTO game (title, year, genre, description, user_id) VALUES(?, ?, ?, ?, ?)");
-        $statement->bind_param("sissi", $sanitized_title, $sanitized_release_year, $sanitized_genre, $sanitized_description, $sanitized_user_id);
+        
+        $null = NULL;
+        
+        $statement = $conn->prepare("INSERT INTO game (title, year, genre, description, user_id, image_name, image_folder) VALUES(?, ?, ?, ?, ?, ?, ?)");
+        $statement->bind_param("sississ", $sanitized_title, $sanitized_release_year, $sanitized_genre, $sanitized_description, $sanitized_user_id, $file_name, $file_destination);
         $statement->execute();
         $statement->close();
         $conn->close();
@@ -59,17 +62,51 @@ if (!isset($_SESSION['email'])) {
 
     //Only run when this page is loaded as a POST
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
+        
         if (game_exist())
         {
             $title_error = "This game already exist create another game";
         }
         else {
             //Check if these POST variables exist
-            if (isset($_POST["title"]) && isset($_POST["year"]) && isset($_POST["genre"]) &&
-                isset($_POST["description"])) {
-                //TODO add the correct user_id when login and session system has been made
-                add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], $_SESSION['user_id']);
+            if (isset($_POST['submit'])) {
+                $file = $_FILES['file'];
+                $file_name = $_FILES['file']['name'];
+                $file_tmp_name = $_FILES['file']['tmp_name'];
+                $file_size = $_FILES['file']['size'];
+                $file_error = $_FILES['file']['error'];
+                $file_type = $_FILES['file']['type'];
+
+                $file_ext = explode('.', $file_name);
+                $file_actual_ext = strtolower(end($file_ext));
+
+                $allowed = array('jpg', 'jpeg', 'png');
+
+                if (in_array($file_actual_ext, $allowed)) {
+                    if ($file_error === 0) {
+                        if ($file_size < 500000) {
+                            $file_new_name = uniqid('', true).".".$file_actual_ext;
+                            $file_destination = 'images/'.$file_new_name;
+                            move_uploaded_file($file_tmp_name, $file_destination);
+                            echo 'succes';
+                        } else {
+                            echo 'Size Error';
+                        }
+                    } else {
+                        echo 'File Error';
+                    }
+                } else {
+                    echo 'Type Error';
+                }
+
+                if (isset($img)) {
+                    echo $img;
+                } else {
+                    echo 'wtf';
+                }
+
+                // TODO add the correct user_id when login and session system has been made
+                add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], $_SESSION['user_id'], $file_name, $file_destination);
                 $succes_msg = "Succes! The game has been added to the list";
             }
         }
@@ -94,7 +131,7 @@ if (!isset($_SESSION['email'])) {
     <?php create_navbar()?>
     <div class="container">
         <h3>Add New Game</h3>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+        <form method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <div class="form-group">
                 <label>Title</label>
                 <input class="form-control" name="title"> <?php echo $title_error; ?>
@@ -113,9 +150,10 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="form-group">
                 <label>Image: </label>
-                <input type="file" name="image" />
+                <input type="file" name="file" id="file">
             </div>
-            <input type="submit" class="btn btn-primary"> <?php echo $succes_msg; ?>
+            <input type="submit" name="submit" class="btn btn-primary"> 
+            <?php echo $succes_msg; ?>
         </form>
     </div>
 </body>

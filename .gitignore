@@ -1,4 +1,5 @@
 ##Ignore these files
 
+credentials.php
 DB.php
 *.xml

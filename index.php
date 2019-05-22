@@ -2,24 +2,34 @@
 session_start();
 include "login.actions.php";
 // session_destroy();
+$user_id = -1;
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
+    echo "wuh";
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $user_authenticated = false;
     $three_attempts = check_failed_attempted_logins($email);
 
     if (!$three_attempts) {
-        $user_authenticated = verify_user($email, $password);
+        $user_id = verify_user($email, $password);
 
-        if ($user_authenticated) {
-            header('Location: home.php');
+        if ($user_id > 0) {
+            $auth_code = send_2step_code();
+
+            $_SESSION['authCode'] = $auth_code;
+            header('Location: 2step_auth.php?userId='. $user_id);
         }
     }
 
     echo '<br>' . 'at : ' . $three_attempts;
-
+    
+    $user_authenticated = $user_id > 0 ? 1 : 0;
     create_login_log($email, $user_authenticated);
+}
+
+if (isset($_POST['authCode'])) {
+    echo 'input ' . $_POST['authCode'];
+    echo '';
 }
 
 
@@ -43,31 +53,31 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 <body>
     <div class="container">
         <h3 class="title">Login</h3>
-
-        <form method="POST">
-            <div class="form-group">
-                <label>E-mail</label>
-                <input class="form-control" placeholder="example@hotmail.com" name="email">
-            </div>
-            <div class="form-group">
-                <label>password</label>
-                <input type="password" class="form-control" placeholder="********" name="password">
-            </div>
-            <?php if (isset($user_verified) && !$user_verified) : ?>
-                <div class="login-denied" style="color: red">
-                    <p>Wrong username or password</p>
+        <?php if (isset($user_id) && $user_id < 0) : ?>
+            <form method="POST">
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input class="form-control" placeholder="example@hotmail.com" name="email">
                 </div>
-            <?php endif ?>
-            <?php if (isset($three_attempts) && $three_attempts) : ?>
-                <div class="login-denied" style="color: red">
-                    <p>Try again in 5 minutes</p>
+                <div class="form-group">
+                    <label>password</label>
+                    <input type="password" class="form-control" placeholder="********" name="password">
                 </div>
-            <?php endif ?>
-            <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
-            <div>
-                <input type="submit" class="btn btn-primary" value="Login">
-            </div>
-        </form>
+                <?php if (isset($user_verified) && !$user_verified) : ?>
+                    <div class="login-denied" style="color: red">
+                        <p>Wrong username or password</p>
+                    </div>
+                <?php endif ?>
+                <?php if (isset($three_attempts) && $three_attempts) : ?>
+                    <div class="login-denied" style="color: red">
+                        <p>Try again in 5 minutes</p>
+                    </div>
+                <?php endif ?>
+                <div>
+                    <input type="submit" class="btn btn-primary" value="Login">
+                </div>
+            </form>
+        <?php endif ?>
         <a href="forgot_pass.php" class="forgot-password">Forgot password?</a>
         <br>
         <a href="sign_up.php" class="sign-up">Sign up if you don't have a account</p>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
 }
 
@@ -12,10 +12,9 @@ spl_autoload_register(function ($class_name) {
 include "partials/navbar.php";
 
 $db = new DB();
-$connection = $db->connect_to_db(); 
+$connection = $db->connect_to_db();
 $sql = "SELECT * FROM game";
 $result = $connection->query($sql);
-
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +33,7 @@ $result = $connection->query($sql);
 </head>
 
 <body>
-    <?php create_navbar()?>
+    <?php create_navbar() ?>
     <div class="container">
         <div class="btn-container">
             <a class="btn btn-dark" href="addgame.php" role="button">Add Game</a>
@@ -50,7 +49,7 @@ $result = $connection->query($sql);
 
                 echo '<a href="game.php?gameId=' . $row['id'] . '">' .
                     '<div class="game-card" style="width: 18rem;">' .
-                    '<img src="https://images.g2a.com/newlayout/600x351/1x1x0/07ed1041ce55/5b5af938ae653a6139610943" alt="Card image cap">' .
+                    '<img src="' . $row['image_folder'] . '" alt="Card image cap">' .
                     '<div class="card-content">' .
                     '<h5 class="card-title">' . $title . ' (' . $year . ')</h5>' .
                     '<b>Genre: ' . $genre . '</b>' .
