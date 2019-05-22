@@ -1,6 +1,8 @@
 <?php
 session_start();
 include "login.actions.php";
+include "credentials.php";
+
 // session_destroy();
 $user_id = -1;
 
@@ -9,7 +11,7 @@ if (isset($_POST['test'])) { }
 if (isset($_POST['email']) && isset($_POST['password'])) {
 
     //Using recaptcha to check if user is not a robot
-    $secret = '6Lcs_KQUAAAAAIiLod60svu56ksbgYaLQs29z_QR';
+    $secret = $recaptcha_secret;
     $response_key = $_POST['g-recaptcha-response'];
     $user_ip = $_SERVER['REMOTE_ADDR'];
     $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response_key&remoteip=$user_ip";
