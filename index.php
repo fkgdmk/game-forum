@@ -39,12 +39,6 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     }
 }
 
-if (isset($_POST['authCode'])) {
-    echo 'input ' . $_POST['authCode'];
-    echo '';
-}
-
-
 ?>
 
 <!DOCTYPE html>
@@ -76,7 +70,7 @@ if (isset($_POST['authCode'])) {
                     <label>password</label>
                     <input type="password" class="form-control" placeholder="********" name="password">
                 </div>
-                <?php if (isset($user_verified) && !$user_verified) : ?>
+                <?php if (isset($user_authenticated) && !$user_authenticated) : ?>
                     <div class="login-denied" style="color: red">
                         <p>Wrong username or password</p>
                     </div>
@@ -86,7 +80,7 @@ if (isset($_POST['authCode'])) {
                         <p>Try again in 5 minutes</p>
                     </div>
                 <?php endif ?>
-                <div class="g-recaptcha" data-sitekey="6Lcs_KQUAAAAAJ5BW7h756_qkj1fwdbrZZx7p5g-"></div>
+                <div class="g-recaptcha" data-sitekey="<?=$recaptcha_site?>"></div>
                 <br />
                 <div>
                     <input type="submit" class="btn btn-primary" value="Login">

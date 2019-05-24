@@ -84,7 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $file_new_name = uniqid('', true) . "." . $file_actual_ext;
                         $file_destination = 'images/' . $file_new_name;
                         move_uploaded_file($file_tmp_name, $file_destination);
-                        echo 'succes';
                     } else {
                         echo 'Size Error';
                     }
@@ -94,13 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 echo 'Type Error';
             }
-
-            if (isset($img)) {
-                echo $img;
-            } else {
-                echo 'wtf';
-            }
-
             // TODO add the correct user_id when login and session system has been made
             add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], $_SESSION['user_id'], $file_name, $file_destination);
             $succes_msg = "Succes! The game has been added to the list";

@@ -1,6 +1,5 @@
 <?php
 session_start();
-echo $_SERVER['REMOTE_ADDR'];
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
 }
