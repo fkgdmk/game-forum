@@ -72,16 +72,18 @@ function check_failed_attempted_logins($email)
     return false;
 }
 
-function send_2step_code()
+function send_2step_code(string $email)
 {
     require './sendgrid/vendor/autoload.php';
     require './credentials.php';
+    echo '<br>'.gettype($email);
 
     $auth_code = rand(10000, 99999);
     $email = new \SendGrid\Mail\Mail();
     $email->setFrom("fredrik0301@gmail.com", "Game Forum");
     $email->setSubject("Authentication code");
     $email->addTo("fredrik0301@gmail.com", "Example User");
+    $email->addTo("hamzah1996@hotmail.com", "Example User");
     $email->addContent("text/plain", "$auth_code");
     $email->addContent(
         "text/html",

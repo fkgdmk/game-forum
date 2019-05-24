@@ -27,7 +27,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             $user_id = verify_user($email, $password);
 
             if ($user_id > 0) {
-                $auth_code = send_2step_code();
+                $auth_code = send_2step_code($email);
 
                 $_SESSION['authCode'] = $auth_code;
                 header('Location: 2step_auth.php?userId=' . $user_id);
