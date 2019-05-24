@@ -16,7 +16,7 @@
 <?php 
     include "database/DB.php";
 
-    $email_error = "";
+    $email_error;
     $action = "sign_up.php";
 
     //Check if this user already exist
@@ -48,12 +48,24 @@
     function insert_new_user($email, $nickname, $password){
         $db = new DB();
         $conn = $db->connect_to_db();
-        $statement = $conn->prepare("INSERT INTO user (email, nickname, password) VALUES(?, ?, ?)");
+        if($conn->connect_errno){
+            printf("Connect failed: %s\n", $conn->connect_error);
+        }
+        $statement = $conn->prepare("INSERT INTO user(email, nickname, password, admin) VALUES(?, ?, ?, ?);");
 
         $hashedPassword = hash_password($password);
 
-        $statement->bind_param("sss", $email, $nickname, $hashedPassword);
-        $statement->execute();
+        try{
+            $int = 0;
+            $statement->bind_param("sssi", $email, $nickname, $hashedPassword, $int);
+        }
+        catch(Exception $e){
+            printf("errormessage: ", $conn->error);
+        }
+
+        if(!$statement->execute()){
+            printf("errormessage: ", $conn->error);
+        }
         $statement->close();
         $conn->close();
     }
@@ -69,11 +81,12 @@
     //Run this only when method is post
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (user_exist()) {
-            $action = "sign_up.php";
             $email_error = "This email already exist";
+            $action = "";
         }
         else {
             //Check if these POST variables exist
+        
             if (isset($_POST["email"]) && isset($_POST["nickname"]) && isset($_POST["password"])) {
 
                 insert_new_user($_POST["email"], $_POST["nickname"], $_POST["password"]);
@@ -89,11 +102,11 @@
 <body>
     <div class="container">
         <h3 class="title">Create a new user here</h3>
-        <form method="POST" action="sign_up.php">
+        <form method="POST" action="">
             <div class="form-group">
                 <label>E-mail</label>
                 <input type="email" class="form-control" placeholder= "example@hotmail.com"
-                       name="email"> <?php //$email_error ?>
+                       name="email"> <?php $email_error ?>
             </div>
             <div class="form-group">
                 <label>Nickname(For public use)</label>
