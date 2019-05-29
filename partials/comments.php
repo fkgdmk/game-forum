@@ -9,7 +9,7 @@ function create_comments($comments)
             <div class="comments">
                 <div style="display: flex; justify-content: space-between">
                     <h6><?= htmlspecialchars($comment["user_nickname"]) ?></h6>
-                    <?php if (($comment['user_id'] == $_SESSION['user_id']) || isset($_SESSION['isAdmin'])) : ?>
+                    <?php if (($comment['user_id'] == $_SESSION['user_id']) || $_SESSION['isAdmin'] == true) : ?>
                         <form method="POST">
                             <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>" />
                             <input type="submit" class="comment-delete" name="delete_comment" value="&times;" style="background-color: white; border: 0">

@@ -23,6 +23,9 @@ function verify_user($email, $password)
                 if ($user['admin']) {
                     $_SESSION['isAdmin'] = true;
                 }
+                else{
+                    $_SESSION['isAdmin'] = false;
+                }
                 return $user['id'];
             } else {
                 return -1;
