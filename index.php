@@ -1,43 +1,7 @@
 <?php
 session_start();
-include "login.actions.php";
+include "actions/login.actions.php";
 include "credentials.php";
-
-// session_destroy();
-$user_id = -1;
-
-if (isset($_POST['test'])) { }
-
-if (isset($_POST['email']) && isset($_POST['password'])) {
-
-    //Using recaptcha to check if user is not a robot
-    $secret = $recaptcha_secret;
-    $response_key = $_POST['g-recaptcha-response'];
-    $user_ip = $_SERVER['REMOTE_ADDR'];
-    $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$response_key&remoteip=$user_ip";
-    $response = file_get_contents($url);
-    $response = json_decode($response);
-
-    if ($response->success) {
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $three_attempts = check_failed_attempted_logins($email);
-
-        if (!$three_attempts) {
-            $user_id = verify_user($email, $password);
-
-            if ($user_id > 0) {
-                $auth_code = send_2step_code($email);
-
-                $_SESSION['authCode'] = $auth_code;
-                header('Location: 2step_auth.php?userId=' . $user_id);
-            }
-        }
-
-        $user_authenticated = $user_id > 0 ? 1 : 0;
-        create_login_log($email, $user_authenticated);
-    }
-}
 
 ?>
 

@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id'])) {
 spl_autoload_register(function ($class_name) {
     include "database/" . $class_name . '.php';
 });
-
 include "partials/navbar.php";
 
 $db = new DB();
@@ -16,8 +15,8 @@ $sql = "SELECT * FROM game";
 $result = $connection->query($sql);
 $connection->close();
 
-if(isset($_POST['game_id'])){ 
-    $game_id=$_POST['game_id'];
+if (isset($_POST['game_id'])) {
+    $game_id = $_POST['game_id'];
     delete_game($game_id);
 }
 ?>
@@ -59,36 +58,34 @@ if(isset($_POST['game_id'])){
                     '<div class="game-card" style="width: 18rem;">' .
                     '<img src="' . $row['image_folder'] . '" alt="Card image cap">' .
                     '<div class="card-content">' .
-                    '<h5 class="card-title">' . $title . ' (' . $year . ')</h5>'.
+                    '<h5 class="card-title">' . $title . ' (' . $year . ')</h5>' .
                     '<b>Genre: ' . $genre . '</b>' .
                     '<p class="card-text">' . $description . '</p>' .
                     '</div>' .
                     '</div>' .
                     '</a>';
-                    $_SESSION["currentGameId"] = $game_id;
-                if($_SESSION["isAdmin"] == true)
-                {
-                    
-
-            
-            ?>
+                $_SESSION["currentGameId"] = $game_id;
+                if ($_SESSION["isAdmin"] == true) {
+                    ?>
                     <div class="btn-container">
                         <form method="post">
-                            <input type='hidden' name='game_id' value='<?php echo $game_id;?>'/> 
-                            <input type="submit" value="Delete" class= "btn btn-primary"></button>
+                            <input type='hidden' name='game_id' value='<?php echo $game_id; ?>' />
+                            <input type="submit" value="Delete" class="btn btn-primary"></button>
                         </form>
                     </div>
-        <?php
-                }
-                echo $_SESSION["isAdmin"];
+                <?php
             }
-        } else {
-            echo "<p>The games list is empty</p>";
+            echo $_SESSION["isAdmin"];
         }
-        ?>
+        echo $_SESSION["currentGameId"];
+    } else {
+        echo "<p>The games list is empty</p>";
+    }
+    ?>
     </div>
-<?php
-    function delete_game($game_id){
+    <?php
+    function delete_game($game_id)
+    {
         $db = new DB();
         $connection = $db->connect_to_db();
         $sql = "DELETE FROM game WHERE game.id = ?";
@@ -99,7 +96,7 @@ if(isset($_POST['game_id'])){
         $statement->close();
         $connection->close();
     }
-?>
+    ?>
 
 
 </body>
