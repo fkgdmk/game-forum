@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 include "database/DB.php";
 include "partials/navbar.php";
 $title_error = "";
-$succes_msg = "";
+$message = "";
 
 //Check if game already exist
 function game_exist()
@@ -84,18 +84,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $file_new_name = uniqid('', true) . "." . $file_actual_ext;
                         $file_destination = 'images/' . $file_new_name;
                         move_uploaded_file($file_tmp_name, $file_destination);
+                        
+                        add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], $_SESSION['user_id'], $file_name, $file_destination);
+                        $message = "Succes! The game has been added to the list";
                     } else {
-                        echo 'Size Error';
+                        $message = 'File Size Error! The game has not been added to the list';
                     }
                 } else {
-                    echo 'File Error';
+                    $message = 'File Error! The game has not been added to the list';
                 }
             } else {
-                echo 'Type Error';
+                $message = 'File Type Error! The game has not been added to the list';
             }
             // TODO add the correct user_id when login and session system has been made
-            add_game($_POST["title"], $_POST["year"], $_POST["genre"], $_POST["description"], $_SESSION['user_id'], $file_name, $file_destination);
-            $succes_msg = "Succes! The game has been added to the list";
         }
     }
 }
@@ -146,7 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
             <input type="submit" name="submit" class="btn btn-primary">
-            <?php echo $succes_msg; ?>
+            <?php echo $message; ?>
         </form>
     </div>
 </body>
