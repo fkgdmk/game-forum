@@ -75,9 +75,7 @@ if (isset($_POST['game_id'])) {
                     </div>
                 <?php
             }
-            echo $_SESSION["isAdmin"];
         }
-        echo $_SESSION["currentGameId"];
     } else {
         echo "<p>The games list is empty</p>";
     }

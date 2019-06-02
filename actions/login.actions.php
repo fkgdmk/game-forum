@@ -19,15 +19,24 @@ function verify_user($email, $password)
     if ($users->num_rows > 0) {
         while ($user = $users->fetch_assoc()) {
             if (password_verify($password, $user['password'])) {
-                // $_SESSION['email'] = $user['email'];
-                if ($user['admin']) {
-                    $_SESSION['isAdmin'] = true;
+                if(isset($_POST['token'])){
+                    $tkn = hash("sha256", $_POST['token']);
+                }
+                if($tkn == $_SESSION['token'])
+                {
+                    if ($user['admin']) {
+                        $_SESSION['isAdmin'] = true;
+                    }
+                    else{
+                        $_SESSION['isAdmin'] = false;
+                    }
+                    return $user['id'];
                 }
                 else{
-                    $_SESSION['isAdmin'] = false;
+                    return -1;
                 }
-                return $user['id'];
-            } else {
+            } 
+            else {
                 return -1;
             }
         }
@@ -102,6 +111,11 @@ function send_2step_code(string $email)
     } catch (Exception $e) {
         echo 'Caught exception: ' . $e->getMessage() . "\n";
     }
+}
+
+function create_random_token(){
+    $rand = substr(md5(microtime()),rand(0,26),20);
+    return $rand;
 }
 
 $user_id = -1;

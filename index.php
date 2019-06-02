@@ -2,6 +2,9 @@
 session_start();
 include "actions/login.actions.php";
 include "credentials.php";
+$tkn = create_random_token();
+$_SESSION['token'] = hash("sha256", $tkn);
+
 
 ?>
 
@@ -26,6 +29,7 @@ include "credentials.php";
         <h3 class="title">Login</h3>
         <?php if (isset($user_id) && $user_id < 0) : ?>
             <form method="POST">
+                <input type="hidden" value="<?php echo $tkn; ?>" name="token">
                 <div class="form-group">
                     <label>E-mail</label>
                     <input class="form-control" placeholder="example@hotmail.com" name="email">
