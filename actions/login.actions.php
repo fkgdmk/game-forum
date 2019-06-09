@@ -89,21 +89,23 @@ function send_2step_code(string $email)
     require './sendgrid/vendor/autoload.php';
     require './credentials.php';
     echo '<br>'.gettype($email);
+    echo $email;
 
     $auth_code = rand(10000, 99999);
-    $email = new \SendGrid\Mail\Mail();
-    $email->setFrom("fredrik0301@gmail.com", "Game Forum");
-    $email->setSubject("Authentication code");
-    $email->addTo("fredrik0301@gmail.com", "Example User");
-    $email->addTo("hamzah1996@hotmail.com", "Example User");
-    $email->addContent("text/plain", "$auth_code");
-    $email->addContent(
+    $mail = new \SendGrid\Mail\Mail();
+    $mail->setFrom("fredrik0301@gmail.com", "Game Forum");
+    $mail->setSubject("Authentication code");
+    //$mail->addTo("fredrik0301@gmail.com", "Example User");
+    //$mail->addTo("hamzah1996@hotmail.com", "Example User");
+    $mail->addTo($email, "Example user");
+    $mail->addContent("text/plain", "$auth_code");
+    $mail->addContent(
         "text/html",
         "<h1>$auth_code</h1>"
     );
     $sendgrid = new \SendGrid($API_KEY);
     try {
-        $response = $sendgrid->send($email);
+        $response = $sendgrid->send($mail);
         print $response->statusCode() . "\n";
         print_r($response->headers());
         print $response->body() . "\n";
@@ -130,7 +132,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     $response = json_decode($response);
 
     if ($response->success) {
-        $email = $_POST['email'];
+        $email = rtrim($_POST['email']);
         $password = $_POST['password'];
         $three_attempts = check_failed_attempted_logins($email);
 
