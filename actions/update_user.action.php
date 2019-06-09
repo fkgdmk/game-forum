@@ -9,8 +9,11 @@ include "./database/DB.php";
         $user_id = $_SESSION['user_id'];
 
         $sql = "SELECT user.email AS email, user.nickname as nickname FROM user
-                WHERE user.id = $user_id";
-        $result = $conn->query($sql);
+                WHERE user.id = ?";
+        $statement = $conn->prepare($sql);
+        $statement->bind_param("i", $user_id);
+        $statement->execute();
+        $result = $statement->get_result();
         
         $user = $result->fetch_assoc();
         $conn->close();
