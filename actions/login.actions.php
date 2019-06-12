@@ -95,8 +95,6 @@ function send_2step_code(string $email)
     $mail = new \SendGrid\Mail\Mail();
     $mail->setFrom("fredrik0301@gmail.com", "Game Forum");
     $mail->setSubject("Authentication code");
-    $mail->addTo("fredrik0301@gmail.com", "Example User");
-    $mail->addTo("hamzah1996@hotmail.com", "Example User");
     $mail->addTo($email, "Example user");
     $mail->addContent("text/plain", "$auth_code");
     $mail->addContent(
