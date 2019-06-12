@@ -53,7 +53,7 @@ include "actions/addgame.actions.php";
                     <div class="invalid-feedback">Example invalid custom file feedback</div>
                 </div>
             </div>
-            <input type="submit" name="submit" class="btn btn-primary">
+            <input type="submit" name="submit" class="btn btn-primary" value="Create">
             <?php echo $message; ?>
         </form>
     </div>

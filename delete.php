@@ -51,10 +51,10 @@ $profile_error = "";
         <h3>Delete</h3>
         <form method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <div class="form-group">
-                <label>E-mail</label>
+                <label>Users E-mail</label>
                 <input class="form-control" name="email"> <?php echo $profile_error; ?>
             </div>
-            <input type="submit" name="submit" value="Update profile" class="btn btn-primary">
+            <input type="submit" name="submit" value="Delete" class="btn btn-primary">
             <?php echo $message; ?>
         </form>
     </div>

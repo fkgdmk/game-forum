@@ -29,8 +29,6 @@ function game_exist()
 //Add games with prepared statements
 function add_game($title, $release_year, $genre, $description, $user_id, $file_name, $file_destination)
 {
-
-
     $db = new DB();
     $conn = $db->connect_to_db();
     $sanitized_title = mysqli_real_escape_string($conn, $title);
