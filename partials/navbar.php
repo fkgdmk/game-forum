@@ -2,7 +2,7 @@
 
 if (isset($_POST['logout'])) {
     session_destroy();
-    header( 'Location: index.php' );
+    header('Location: index.php');
 }
 
 function create_navbar()
@@ -17,17 +17,20 @@ function create_navbar()
             <ul class="nav navbar-nav">
                 <li class="nav-item active">
                     <a class="nav-link" href="home.php">Home <span class="sr-only">(current)</span></a>
-                    <a class="nav-link" href="update_user.php">Profile <span class="sr-only">(current)</span></a>
-                    <?php if($_SESSION['isAdmin'] == 1) 
-                    { ?>
-                    <a class="nav-link" href="delete.php">Delete users <span class="sr-only">(current)</span></a>
-                    <?php } ?>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="update_user.php">Profile <span class="sr-only">(current)</span></a>
+                </li>
+                <?php if ($_SESSION['isAdmin'] == 1) { ?>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="delete.php">Delete users <span class="sr-only">(current)</span></a>
+                    </li>
+                <?php } ?>
             </ul>
         </div>
-        <form method="POST" action=""> 
+        <form method="POST" action="">
             <input class="btn btn-outline-secondary my-2 my-sm-0" type="submit" name="logout" value="Log out">
-        </form> 
+        </form>
     </nav>
 <?php
 }
